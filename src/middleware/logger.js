@@ -22,8 +22,8 @@ function requestLogger(req, res, next) {
   res.on('finish', () => {
     logger.info(`${req.method} ${req.originalUrl}`, {
       status: res.statusCode,
-      ms: Date.now() - start,
-      ip: req.ip,
+      ms:     Date.now() - start,
+      ip:     req.ip,
     });
   });
   next();

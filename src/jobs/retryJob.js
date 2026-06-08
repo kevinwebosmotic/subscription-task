@@ -1,9 +1,7 @@
 const cron            = require('node-cron');
 const { logger }      = require('../middleware/logger');
 const subscriptionDAO = require('../modules/subscription/subscription.dao');
-
-// TODO: Wire paymentService once payment module is implemented
-// Payment processing and retry logic will be triggered here
+const paymentService  = require('../modules/payment/payment.service');
 
 const SCHEDULE = process.env.CRON_SCHEDULE || '* * * * *';
 
@@ -15,14 +13,16 @@ async function runBillingCycle() {
 
   for (const subscription of due) {
     try {
-      // TODO: await paymentService.processPayment(subscription)
-      logger.info('Subscription due for billing', { subscriptionId: subscription.id });
+      await paymentService.processPayment(subscription);
     } catch (err) {
-      logger.error('Error in billing cycle', { subscriptionId: subscription.id, error: err.message });
+      logger.error('Error processing subscription in billing cycle', {
+        subscriptionId: subscription.id,
+        error: err.message,
+      });
     }
   }
 
-  logger.info(`Billing cycle completed — ${due.length} subscription(s) checked`);
+  logger.info(`Billing cycle completed — ${due.length} subscription(s) processed`);
 }
 
 function start() {
@@ -30,7 +30,9 @@ function start() {
     logger.error(`Invalid cron schedule: "${SCHEDULE}" — retry job not started`);
     return;
   }
+
   logger.info(`Retry job scheduled: "${SCHEDULE}"`);
+
   cron.schedule(SCHEDULE, async () => {
     try {
       await runBillingCycle();

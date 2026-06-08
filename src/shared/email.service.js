@@ -6,6 +6,7 @@ let transporter = null;
 function getTransporter() {
   if (transporter) return transporter;
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER) return null;
+
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: parseInt(process.env.SMTP_PORT || '587', 10),
@@ -17,6 +18,7 @@ function getTransporter() {
 async function send(to, subject, html) {
   const t = getTransporter();
   if (!t) { logger.debug('Email transport not configured — skipping', { to, subject }); return; }
+
   try {
     await t.sendMail({ from: process.env.EMAIL_FROM, to, subject, html });
     logger.info('Email sent', { to, subject });

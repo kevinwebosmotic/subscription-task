@@ -9,14 +9,15 @@ class AppError extends Error {
 }
 
 function asyncHandler(fn) {
-  return (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+  return (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
 }
 
 function notFound(req, res, next) {
   next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
   const statusCode = err.statusCode || err.status || 500;
   const isOperational = err.isOperational || statusCode < 500;
 

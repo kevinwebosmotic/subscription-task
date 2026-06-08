@@ -1,4 +1,4 @@
-const Customer    = require('./customer.model');
+const Customer     = require('./customer.model');
 const { AppError } = require('../../middleware/errorHandler');
 
 async function create({ name, email }) {

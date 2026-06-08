@@ -12,8 +12,8 @@ function toDTO(doc) {
   const plan = obj.plan_id;
   return {
     id:                obj.id,
-    customer_id:       typeof cust === 'object' ? cust.id  : String(cust || ''),
-    plan_id:           typeof plan === 'object' ? plan.id  : String(plan || ''),
+    customer_id:       cust  ? (typeof cust === 'object' ? cust.id  : String(cust)) : null,
+    plan_id:           plan  ? (typeof plan === 'object' ? plan.id  : String(plan)) : null,
     status:            obj.status,
     next_billing_date: obj.next_billing_date,
     retry_count:       obj.retry_count,

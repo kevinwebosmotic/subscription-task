@@ -1,11 +1,12 @@
 require('dotenv').config();
-const fs      = require('fs');
-const path    = require('path');
+
+const fs   = require('fs');
+const path = require('path');
 const express = require('express');
 const { requestLogger, logger } = require('./middleware/logger');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const { connect } = require('./config/database');
-const retryJob    = require('./jobs/retryJob');
+const retryJob = require('./jobs/retryJob');
 
 const logsDir = path.join(__dirname, '..', 'logs');
 if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
@@ -31,6 +32,7 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
   try {
     await connect();
     logger.info('MongoDB connected');
+
     app.listen(PORT, () => {
       logger.info(`Server running on http://localhost:${PORT}`);
       retryJob.start();
